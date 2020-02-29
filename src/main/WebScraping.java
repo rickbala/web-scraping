@@ -6,8 +6,6 @@ import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 
@@ -29,6 +27,7 @@ public class WebScraping {
 		ReadableByteChannel readableByteChannel = Channels.newChannel(website.openStream());
 		FileOutputStream fileOutputStream = new FileOutputStream(outFileName);
 		fileOutputStream.getChannel().transferFrom(readableByteChannel, 0, Long.MAX_VALUE);
+		System.out.println("Downloaded file: " + outFileName);
 	}
 
 	private static BigInteger getFileSize(String urlString) throws MalformedURLException {
