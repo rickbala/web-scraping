@@ -1,50 +1,65 @@
 package main;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.math.BigInteger;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
+import java.util.List;
 
-public class WebScraping {
+public interface WebScraping {
 
-	public static void main(String[] args) throws IOException {
-		String indexUrl = "http://www.google.com/";
-		downloadFile(indexUrl, "index.html");
+	/**
+	** @param url http address of an html file
+	** @param outputFile of file to save to
+	** @return a String containing the html body
+	**/
+	public void downloadFile(String url, String outputFile);
 
-		String fileUrl = indexUrl + "images/branding/googlelogo/2x/googlelogo_color_272x92dp.png";
-		downloadFile(fileUrl, "logo.png"); //only for checking the size on the terminal
+	/**
+	** @param url valid url address
+	** @return a SBigInteger value in bytes
+	**/
+	public BigInteger getFileSize(String url);
 
-		BigInteger fileSize = getFileSize(fileUrl);
-		System.out.println(fileSize);
-	}
+	/**
+	** @param url valid url address
+	** @return the name of the file
+	**/
+	public String getFileName(String url);
 
-	private static void downloadFile(String url, String outFileName) throws IOException {
-		URL website = new URL(url);
-		ReadableByteChannel readableByteChannel = Channels.newChannel(website.openStream());
-		FileOutputStream fileOutputStream = new FileOutputStream(outFileName);
-		fileOutputStream.getChannel().transferFrom(readableByteChannel, 0, Long.MAX_VALUE);
-		System.out.println("Downloaded file: " + outFileName);
-	}
+	/**
+	** @param url valid url address
+	** @return the extension of the file
+	**/
+	public String getFileExtension(String url);
 
-	private static BigInteger getFileSize(String urlString) throws MalformedURLException {
-		URL url = new URL(urlString);
-		HttpURLConnection httpURLConnection;
-		BigInteger size = new BigInteger("0");
+	/**
+	** @param url valid url address
+	** @return true if is a link for a page with more content
+	**/
+	public boolean getIsLink(String url);
 
-		try {
-			httpURLConnection = (HttpURLConnection) url.openConnection();
-			httpURLConnection.setRequestMethod("HEAD");
-			size = BigInteger.valueOf(httpURLConnection.getContentLength());
-			httpURLConnection.getInputStream().close();
-		} catch (Exception e) {
-			System.out.println("Error while getting file info: " + urlString);
-		}
+	/**
+	** @param url http address of an html file
+	** @return a String containing the html body
+	**/
+	public String getHtmlBody(String url);
 
-		return size;
-	}
+	/**
+	** @param htmlBody String containing the html body
+	** @param startPos the start position for searching the tag
+	** @return a String with the first ocurrence of the tag
+	**/
+	public String getElementByTag(String htmlBody, int startPos);
+
+	/**
+	** @param htmlBody String containing the html body or an element
+	** @return a list of String all the tags on that page
+	**/
+	public List<String> getAllOcurrencesOfTag(String htmlBody);
+
+	/**
+	** @param element String containing the element html
+	** @param startPos start position for the search
+	** @return a String with the attribute
+	**/
+	public String getAttributeFromElement(String element, int startPos);
 
 }
